@@ -1,0 +1,41 @@
+.narrow {
+    max-width: 35em;
+}
+
+#player_table {
+    text-align: center;
+    border-spacing: 0em 1em;
+}
+
+#output_table {
+    text-align: center;
+}
+
+#output_table td {
+    padding-left: 0.75em;
+    padding-right: 0.75em;
+}
+
+input.menu, .submenu {
+    display: none;
+}
+
+label.menu {
+    position: absolute;
+    right: 0em;
+    cursor: pointer;
+}
+
+input.menu:checked~.submenu {
+    display: block;
+}
+
+.submenu {
+    position: absolute;
+    right: 0em;
+    margin-top: 2em;
+}
+
+ul.submenu {
+    list-style-type: none;
+}
