@@ -1,4 +1,5 @@
 import functools
+import time as pytime
 
 from pyscript import when
 from pyscript.web import *
@@ -106,7 +107,8 @@ def calculate(evt):
     iterations = int(page['#settings_iterations'][0].value)
     rows = int(page['#settings_rows'][0].value)
     p = PermutationFinder(positions)
-    pop = p.optimize(population=population, rounds=iterations)
+    seed = int(pytime.time()*100)%2**32
+    pop = p.optimize(population=population, rounds=iterations, seed=seed)
 
     to = OutputTable()
     to.clear()
