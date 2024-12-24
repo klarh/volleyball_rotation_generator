@@ -1,15 +1,14 @@
-from pyscript import document
-import js
-import urllib
-
-QUERY_ARGS = dict(urllib.parse.parse_qsl(js.location.search[1:]))
-
 import numpy as np
 import app_lib
 
-# setter, middle, outside
-positions = np.random.random((7, 3))
-names = np.array(['Player {}'.format(chr(ord('a') + i)) for i in range(len(positions))])
+from pyscript import web
+
+for name in ('population', 'iterations', 'rows'):
+    if name in app_lib.state.QUERY_ARGS:
+        web.page['#settings_{}'.format(name)].value = app_lib.state.QUERY_ARGS[name]
+
+names = app_lib.state.names
+positions = app_lib.state.positions
 
 t = app_lib.ui.PlayerTable()
 for (name, pos) in zip(names, positions):
