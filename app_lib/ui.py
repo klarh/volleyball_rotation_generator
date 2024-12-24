@@ -116,9 +116,6 @@ def calculate(evt):
     for (k, perm) in pop:
         pnames = names[np.array(perm)]
         pnames = np.roll(pnames, -pnames.tolist().index(names[0])).tolist()
-        if pnames.index(names[1]) > pnames.index(names[2]):
-            pnames = pnames[::-1]
-            pnames = np.roll(pnames, -pnames.index(names[0])).tolist()
         pnames = tuple(pnames)
         pnames = tuple(name.title() for name in pnames)
         if pnames not in handled:

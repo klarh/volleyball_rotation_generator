@@ -1,6 +1,8 @@
+import collections
+import functools
+
 import numpy as np
 
-import functools
 @functools.lru_cache
 def get_triplets(N):
     triplets = np.arange(N)[:, None] + np.arange(3)
@@ -47,7 +49,10 @@ class PermutationFinder:
             perm = tuple(rng.permutation(self.N).tolist())
             pop.append(self.perm_to_key(perm))
 
-        live_perms = {p[-1] for p in pop}
+        # permutation -> index
+        live_perms = collections.defaultdict(set)
+        for i, (scores, perm) in enumerate(pop):
+            live_perms[perm].add(i)
 
         for i, j in rng.choice(population, size=(rounds, 2)):
             if i == j:
@@ -56,9 +61,11 @@ class PermutationFinder:
             mix = mix_permutation(mi[1], mj[1], rng)
             mix = self.perm_to_key(mix)
             if mix < mi and mix[-1] not in live_perms:
-                live_perms.remove(mi[1])
+                live_perms[mi[1]].remove(i)
+                if not live_perms[mi[1]]:
+                    del live_perms[mi[1]]
                 pop[i] = mix
-                live_perms.add(mix[1])
+                live_perms[mix[1]].add(i)
 
         pop.sort()
 
@@ -79,7 +86,7 @@ assignments = np.array([
     # s o m
     [(0, 2), (1, 0), (2, 1)],
 ])
-assignment_penalties = np.array([0., 1, 1, 1, 3, 2])
+assignment_penalties = np.array([0., 1, 1, 2, 3, 2])
 assignments = 3*assignments[..., 0] + assignments[..., 1]
 
 # sorted order
