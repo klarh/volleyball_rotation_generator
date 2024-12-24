@@ -1,4 +1,4 @@
-packages = [ "numpy" ]
+packages = [ "numpy", "matplotlib" ]
 
 [files]
 "./app_lib/__init__.py" = "./app_lib/__init__.py"
