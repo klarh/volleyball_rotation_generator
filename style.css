@@ -9,6 +9,17 @@
     overflow-x: auto;
 }
 
+@media screen and (orientation: portrait) {
+    input[type='range'].value_slider {
+    writing-mode: vertical-lr;
+    direction: rtl;
+    vertical-align: middle;
+    }
+}
+input[type='range'].player_setter {accent-color: rgb(79,140,157);}
+input[type='range'].player_middle {accent-color: rgb(182,69,59);}
+input[type='range'].player_outside {accent-color: rgb(22,109,42);}
+
 #output_table {
     text-align: center;
 }

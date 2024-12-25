@@ -33,7 +33,7 @@ class PlayerTable:
                 td(make_check(setter, 'player_setter')),
                 td(make_check(middle, 'player_middle')),
                 td(make_check(outside, 'player_outside')),
-                button('\u274c', on_click=self.remove_row_callback),
+                td(button('\u274c', on_click=self.remove_row_callback)),
                 classes=['player_row'],
             )
         )
