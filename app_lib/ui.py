@@ -6,6 +6,7 @@ from pyscript.web import *
 import numpy as np
 from .position_optimization import PermutationFinder
 
+
 class PlayerTable:
     def __init__(self):
         self.table = self.find_table()
@@ -20,12 +21,19 @@ class PlayerTable:
                 th('Setter'),
                 th('Middle'),
                 th('Outside'),
-            ))
+            )
+        )
         return result
 
     def add_row(self, name, setter, middle, outside):
         make_check = lambda x, cls: input_(
-            type='range', classes=[cls, 'value_slider'], min=0, max=1, step='0.001', value=x)
+            type='range',
+            classes=[cls, 'value_slider'],
+            min=0,
+            max=1,
+            step='0.001',
+            value=x,
+        )
         name_elt = input_(value=str(name), classes=['player_name'])
         self.table.append(
             tr(
@@ -48,14 +56,16 @@ class PlayerTable:
         names = list(e.value for e in self.table.find('.player_name'))
         checks = []
         for name in ('setter', 'middle', 'outside'):
-            checks.append([
-                float(e.value) for e in self.table.find('.player_{}'.format(name))])
+            checks.append(
+                [float(e.value) for e in self.table.find('.player_{}'.format(name))]
+            )
 
         prefs = []
-        for (s, m, o) in zip(*checks):
+        for s, m, o in zip(*checks):
             prefs.append((s, m, o))
 
         return names, prefs
+
 
 class OutputTable:
     def __init__(self):
@@ -69,7 +79,8 @@ class OutputTable:
             tr(
                 th('Names'),
                 th('Scores', style=dict(width='35%')),
-            ))
+            )
+        )
         return result
 
     def clear(self):
@@ -82,8 +93,8 @@ class OutputTable:
             tr(
                 td(names),
                 td(scores),
-                )
             )
+        )
 
 
 class AddPlayerState:
@@ -94,7 +105,9 @@ class AddPlayerState:
         self.COUNT += 1
         PlayerTable().add_row(name, 1, 1, 1)
 
+
 when('click', page['#add_player_button'])(AddPlayerState())
+
 
 @when('click', page['#calculate_button'])
 def calculate(evt):
@@ -107,19 +120,21 @@ def calculate(evt):
     iterations = int(page['#settings_iterations'][0].value)
     rows = int(page['#settings_rows'][0].value)
     p = PermutationFinder(positions)
-    seed = int(pytime.time()*100)%2**32
+    seed = int(pytime.time() * 100) % 2**32
     pop = p.optimize(population=population, rounds=iterations, seed=seed)
 
     to = OutputTable()
     to.clear()
     handled = set()
-    for (k, perm) in pop:
+    for k, perm in pop:
         pnames = names[np.array(perm)]
         pnames = np.roll(pnames, -pnames.tolist().index(names[0])).tolist()
         pnames = tuple(pnames)
         pnames = tuple(name.title() for name in pnames)
         if pnames not in handled:
-            to.add_row(', '.join(pnames), (', '.join(['{:.02f}'.format(-v) for v in k])))
+            to.add_row(
+                ', '.join(pnames), (', '.join(['{:.02f}'.format(-v) for v in k]))
+            )
         handled.add(pnames)
         if len(handled) >= rows:
             break

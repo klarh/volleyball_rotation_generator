@@ -11,5 +11,5 @@ names = app_lib.state.names
 positions = app_lib.state.positions
 
 t = app_lib.ui.PlayerTable()
-for (name, pos) in zip(names, positions):
+for name, pos in zip(names, positions):
     t.add_row(name, *pos)

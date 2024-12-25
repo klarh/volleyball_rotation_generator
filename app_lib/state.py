@@ -1,5 +1,3 @@
-import zlib
-import base64
 import urllib
 
 import numpy as np
@@ -16,14 +14,14 @@ if 'players' in QUERY_ARGS:
     positions = []
     names = []
     for i, elt in enumerate(players):
-        if i%4 == 0:
+        if i % 4 == 0:
             names.append(elt)
             positions.append([])
         else:
             try:
                 positions[-1].append(float(elt))
             except ValueError:
-                positions[-1].append(1.)
+                positions[-1].append(1.0)
 
     if len(positions[-1]) != 3:
         positions.pop()
@@ -31,7 +29,10 @@ if 'players' in QUERY_ARGS:
 if not positions or not names:
     # setter, middle, outside
     positions = np.random.random((7, 3))
-    names = np.array(['Player {}'.format(chr(ord('a') + i)) for i in range(len(positions))])
+    names = np.array(
+        ['Player {}'.format(chr(ord('a') + i)) for i in range(len(positions))]
+    )
+
 
 @when('click', web.page['#share_button'])
 def share_url():
@@ -43,10 +44,14 @@ def share_url():
     table = ui.PlayerTable()
     names, positions = table.read()
     player_bits = []
-    for (name, pos) in zip(names, np.round(positions, 3)):
+    for name, pos in zip(names, np.round(positions, 3)):
         player_bits.append(name)
         for p in pos:
             player_bits.append('{:.03f}'.format(p))
     query['players'] = ','.join(player_bits)
 
-    js.location.search = '?' + '&'.join(['{}={}'.format(k, v) for (k, v) in query.items()])
+    parsed_url = urllib.parse.urlparse(str(js.location))
+    parsed_url = parsed_url._replace(
+        query='&'.join(['{}={}'.format(k, v) for (k, v) in query.items()])
+    )
+    js.history.pushState('', '', parsed_url.geturl())
