@@ -13,3 +13,6 @@ positions = app_lib.state.positions
 t = app_lib.ui.PlayerTable()
 for name, pos in zip(names, positions):
     t.add_row(name, *pos)
+
+for elt in web.page['.loading_screen']:
+    elt.remove()
