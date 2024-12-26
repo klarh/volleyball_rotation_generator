@@ -1,5 +1,26 @@
+body {
+    font-family: Verdana, sans-serif;
+    background-color: #F1EBE4;
+}
+
 .narrow {
     max-width: min(100%, 45em);
+}
+
+.center_content{
+    padding: 2em 2em;
+}
+
+button {
+    background-color: #D6DCDA;
+    border: none;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 100%;
+    padding: 0.5em 0.5em;
+    margin: 0em 0.25em;
+    border-radius: 2px;
 }
 
 #player_table {
@@ -9,11 +30,21 @@
     overflow-x: auto;
 }
 
+input.player_name {
+    background-color: #F1F3F3;
+    border: none;
+    padding: 6px;
+    border-radius: 4px;
+    font-size: 100%;
+    text-align: right;
+    width: 8em;
+}
+
 @media screen and (orientation: portrait) {
     input[type='range'].value_slider {
-    writing-mode: vertical-lr;
-    direction: rtl;
-    vertical-align: middle;
+        writing-mode: vertical-lr;
+        direction: rtl;
+        vertical-align: middle;
     }
 }
 input[type='range'].player_setter {accent-color: rgb(79,140,157);}
