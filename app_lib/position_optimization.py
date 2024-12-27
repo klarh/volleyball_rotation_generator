@@ -3,6 +3,8 @@ import functools
 
 import numpy as np
 
+ScoreResult = collections.namedtuple('ScoreResult', ['scores', 'assignments'])
+
 
 @functools.lru_cache
 def get_triplets(N):
@@ -12,19 +14,23 @@ def get_triplets(N):
 
 
 def get_scores(positions):
+    # (N_player, 3)
     positions = np.array(positions)
     positions /= np.maximum(1e-6, np.sum(positions, axis=-1, keepdims=True))
     triplets = get_triplets(len(positions))
 
+    # (N_player, 9) -> (N_player, N_assignments, 3)
     assigned_position_values = positions[triplets].reshape((len(positions), 9))[
         :, assignments
     ]
+    # (N_keys, N_player, N_assignments)
     keys = np.array([keyfun(assigned_position_values) for keyfun in keyfuns])
-    best_assignments = np.lexsort(keys[::-1])
-    best_scores = keys.transpose([1, 2, 0])[
-        np.arange(len(positions)), best_assignments[:, 0]
-    ]
-    return best_scores.mean(axis=0)
+    # (N_player, N_assignments) -> N_player
+    best_assignments = np.lexsort(keys[::-1])[:, 0]
+    # (N_player, N_assignments, N_keys) -> (N_player, N_keys)
+    best_scores = keys.transpose([1, 2, 0])[np.arange(len(positions)), best_assignments]
+    # -> N_keys
+    return ScoreResult(best_scores.mean(axis=0), best_assignments)
 
 
 def mix_permutation(p1, p2, rng):
@@ -48,8 +54,8 @@ class PermutationFinder:
 
     def perm_to_key(self, perm):
         # perm = tuple(perm.tolist())
-        scores = self.evaluate_permutation(perm)
-        return (tuple(scores.tolist()), perm)
+        (scores, assignments) = self.evaluate_permutation(perm)
+        return (tuple(scores.tolist()), perm, assignments)
 
     def optimize(self, population=128, seed=13, rounds=128):
         rng = np.random.default_rng(seed)
@@ -61,7 +67,7 @@ class PermutationFinder:
 
         # permutation -> index
         live_perms = collections.defaultdict(set)
-        for i, (scores, perm) in enumerate(pop):
+        for i, (scores, perm, _) in enumerate(pop):
             live_perms[perm].add(i)
 
         for i, j in rng.choice(population, size=(rounds, 2)):
@@ -70,7 +76,7 @@ class PermutationFinder:
             mi, mj = pop[i], pop[j]
             mix = mix_permutation(mi[1], mj[1], rng)
             mix = self.perm_to_key(mix)
-            if mix < mi and mix[-1] not in live_perms:
+            if mix < mi and mix[1] not in live_perms:
                 live_perms[mi[1]].remove(i)
                 if not live_perms[mi[1]]:
                     del live_perms[mi[1]]
@@ -81,9 +87,23 @@ class PermutationFinder:
 
         return pop
 
-    # ---- net ----
+    @staticmethod
+    def get_assignment_statistics(assignments):
+        assign_names = np.array(list('smo' 'som' 'mso' 'mos' 'oms' 'osm')).reshape(
+            (6, 3)
+        )
+        position_assignments = [collections.Counter() for _ in range(len(assignments))]
+        N = len(assignments)
+
+        for i, j in enumerate(assignments):
+            a, b, c = assign_names[j]
+            position_assignments[(i + 0) % N][a] += 1
+            position_assignments[(i + 1) % N][b] += 1
+            position_assignments[(i + 2) % N][c] += 1
+        return position_assignments
 
 
+# ---- net ----
 assignments = np.array(
     [
         # o m s

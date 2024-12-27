@@ -126,15 +126,33 @@ def calculate(evt):
     to = OutputTable()
     to.clear()
     handled = set()
-    for k, perm in pop:
+    for k, perm, assignments in pop:
         pnames = names[np.array(perm)]
-        pnames = np.roll(pnames, -pnames.tolist().index(names[0])).tolist()
+        roll = -pnames.tolist().index(names[0])
+        pnames = np.roll(pnames, roll).tolist()
+        assignments = np.roll(assignments, roll)
         pnames = tuple(pnames)
         pnames = tuple(name.title() for name in pnames)
         if pnames not in handled:
-            to.add_row(
-                ', '.join(pnames), (', '.join(['{:.02f}'.format(-v) for v in k]))
-            )
+            stats = dict(zip(pnames, p.get_assignment_statistics(assignments)))
+            augmented_names = []
+            for name in pnames:
+                player_stats = stats[name]
+                details = []
+                for pos in 'smo':
+                    if not player_stats[pos]:
+                        continue
+                    elif player_stats[pos] == 1:
+                        details.append(pos.upper())
+                    else:
+                        details.append(
+                            '{}<sup>{}</sup>'.format(pos.upper(), player_stats[pos])
+                        )
+                details = ''.join(details)
+                augmented_names.append('{} ({})'.format(name, details))
+
+            score_str = ', '.join(['{:.02f}'.format(-v) for v in k])
+            to.add_row(', '.join(augmented_names), score_str)
         handled.add(pnames)
         if len(handled) >= rows:
             break
