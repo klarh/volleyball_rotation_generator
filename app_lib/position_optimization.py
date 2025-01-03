@@ -125,5 +125,6 @@ assignments = 3 * assignments[..., 0] + assignments[..., 1]
 
 # sorted order
 keyfuns = [
+    lambda x: -np.sum(x > 0, axis=-1),
     lambda x: -np.sum(x - assignment_penalties[:, None] * 0.1, axis=-1),
 ]
