@@ -38,7 +38,7 @@ if not positions or not names:
 def share_url():
     query = {}
 
-    for name in ('population', 'iterations', 'rows'):
+    for name in ('population', 'iterations', 'rows', 'swap_cost'):
         query[name] = web.page['#settings_{}'.format(name)][0].value
 
     table = ui.PlayerTable()

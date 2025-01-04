@@ -3,7 +3,7 @@ import app_lib
 
 from pyscript import web
 
-for name in ('population', 'iterations', 'rows'):
+for name in ('population', 'iterations', 'rows', 'swap_cost'):
     if name in app_lib.state.QUERY_ARGS:
         web.page['#settings_{}'.format(name)].value = app_lib.state.QUERY_ARGS[name]
 

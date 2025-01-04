@@ -119,7 +119,8 @@ def calculate(evt):
     population = int(page['#settings_population'][0].value)
     iterations = int(page['#settings_iterations'][0].value)
     rows = int(page['#settings_rows'][0].value)
-    p = PermutationFinder(positions)
+    swap_cost = float(page['#settings_swap_cost'][0].value)
+    p = PermutationFinder(positions, swap_cost=swap_cost)
     seed = int(pytime.time() * 100) % 2**32
     pop = p.optimize(population=population, rounds=iterations, seed=seed)
 

@@ -13,7 +13,17 @@ def get_triplets(N):
     return triplets
 
 
-def get_scores(positions):
+@functools.lru_cache
+def get_keyfuns(swap_cost=0.1):
+    # sorted order
+    return [
+        lambda x: -np.sum(x > 0, axis=-1),
+        lambda x: -np.sum(x - assignment_penalties[:, None] * swap_cost, axis=-1),
+    ]
+
+
+def get_scores(positions, **keyfun_kwargs):
+    keyfuns = get_keyfuns(**keyfun_kwargs)
     # (N_player, 3)
     positions = np.array(positions)
     positions /= np.maximum(1e-6, np.sum(positions, axis=-1, keepdims=True))
@@ -41,16 +51,17 @@ def mix_permutation(p1, p2, rng):
 
 
 class PermutationFinder:
-    def __init__(self, positions, cache_size=256000):
+    def __init__(self, positions, cache_size=256000, swap_cost=0.1):
         self.positions = np.asarray(positions)
         self.evaluate_permutation = functools.lru_cache(maxsize=cache_size)(
             self._evaluate_permutation
         )
+        self.swap_cost = swap_cost
         self.N = len(self.positions)
 
     def _evaluate_permutation(self, p):
         p = np.array(p)
-        return get_scores(self.positions[p])
+        return get_scores(self.positions[p], swap_cost=self.swap_cost)
 
     def perm_to_key(self, perm):
         # perm = tuple(perm.tolist())
@@ -122,9 +133,3 @@ assignments = np.array(
 )
 assignment_penalties = np.array([0.0, 1, 1, 2, 3, 2])
 assignments = 3 * assignments[..., 0] + assignments[..., 1]
-
-# sorted order
-keyfuns = [
-    lambda x: -np.sum(x > 0, axis=-1),
-    lambda x: -np.sum(x - assignment_penalties[:, None] * 0.1, axis=-1),
-]
