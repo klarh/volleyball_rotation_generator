@@ -108,6 +108,47 @@ ul.submenu {
   margin-left: 1em;
 }
 
+input.help,
+.subhelp {
+  display: none;
+}
+
+label.help {
+  position: absolute;
+  right: 0.5em;
+  top: 1.5em;
+  cursor: pointer;
+  font-size: 200%;
+}
+
+input.help:checked ~ .subhelp {
+  display: block;
+}
+
+.subhelp {
+  font-size: 100%;
+  position: absolute;
+  width: min(100%, 45em);
+  height: auto;
+  margin: 5em auto;
+  top: 1em;
+  left: 50%;
+  transform: translate(-50%, 0%);
+  background-color: #f1ebe4;
+  padding: 3em;
+  border: 2px solid black;
+  border-radius: 1em;
+}
+
+ul.subhelp {
+  list-style-type: none;
+  line-height: 200%;
+}
+
+.subhelp input {
+  margin-left: 1em;
+}
+
 div.loading_screen {
   position: absolute;
   top: 0;
