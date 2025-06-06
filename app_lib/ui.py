@@ -5,6 +5,7 @@ from pyscript import when
 from pyscript.web import *
 import numpy as np
 from .position_optimization import PermutationFinder
+from .state import share_url
 
 
 class PlayerTable:
@@ -28,23 +29,26 @@ class PlayerTable:
     def add_row(self, name, setter, middle, outside):
         make_check = lambda x, cls: input_(
             type='range',
-            classes=[cls, 'value_slider'],
+            classes=[cls, 'value_slider', 'autosave'],
             min=0,
             max=1,
             step='0.001',
             value=x,
         )
-        name_elt = input_(value=str(name), classes=['player_name'])
-        self.table.append(
-            tr(
-                td(name_elt),
-                td(make_check(setter, 'player_setter')),
-                td(make_check(middle, 'player_middle')),
-                td(make_check(outside, 'player_outside')),
-                td(button('\u274c', on_click=self.remove_row_callback)),
-                classes=['player_row'],
-            )
+        name_elt = input_(value=str(name), classes=['player_name', 'autosave'])
+        when('input', name_elt, handler=share_url)
+
+        row = tr(
+            td(name_elt),
+            td(make_check(setter, 'player_setter')),
+            td(make_check(middle, 'player_middle')),
+            td(make_check(outside, 'player_outside')),
+            td(button('\u274c', on_click=self.remove_row_callback)),
+            classes=['player_row'],
         )
+        when('change', row['.autosave'], handler=share_url)
+
+        self.table.append(row)
 
     @staticmethod
     def remove_row_callback(event):

@@ -2,11 +2,14 @@ import urllib
 
 import numpy as np
 import js
+from pyscript import ffi
 from pyscript import when
 from pyscript import web
 from . import ui
 
 QUERY_ARGS = dict(urllib.parse.parse_qsl(js.location.search[1:]))
+
+PENDING_SHARE = None
 
 positions = names = None
 if 'players' in QUERY_ARGS:
@@ -36,6 +39,15 @@ if not positions or not names:
 
 @when('click', web.page['#share_button'])
 def share_url():
+    global PENDING_SHARE
+
+    if PENDING_SHARE:
+        js.clearTimeout(PENDING_SHARE)
+
+    PENDING_SHARE = js.setTimeout(share_url_ffi, 2000)
+
+
+def share_url_():
     query = {}
 
     for name in ('population', 'iterations', 'rows', 'swap_cost'):
@@ -55,3 +67,6 @@ def share_url():
         query='&'.join(['{}={}'.format(k, v) for (k, v) in query.items()])
     )
     js.history.pushState('', '', parsed_url.geturl())
+
+
+share_url_ffi = ffi.create_proxy(share_url_)
