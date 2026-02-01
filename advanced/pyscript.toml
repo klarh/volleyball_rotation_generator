@@ -1,0 +1,7 @@
+packages = [ "numpy" ]
+
+[files]
+"./app_lib/__init__.py" = "./app_lib/__init__.py"
+"./app_lib/position_optimization.py" = "./app_lib/position_optimization.py"
+"./app_lib/state.py" = "./app_lib/state.py"
+"./app_lib/ui.py" = "./app_lib/ui.py"
