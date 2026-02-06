@@ -157,7 +157,15 @@ def calculate(evt):
     rows = int(page['#settings_rows'][0].value)
     swap_cost = float(page['#settings_swap_cost'][0].value)
     flex_power = float(page['#settings_flex_power'][0].value)
-    p = PermutationFinder(positions, swap_cost=swap_cost, flex_power=flex_power)
+    off_right = int(page['#settings_off_right'][0].value)
+    back_bonus = float(page['#settings_back_bonus'][0].value)
+    p = PermutationFinder(
+        positions,
+        swap_cost=swap_cost,
+        flex_power=flex_power,
+        off_right=off_right,
+        back_row_bonus=back_bonus,
+    )
     seed = int(pytime.time() * 100) % 2**32
     pop = p.optimize(population=population, rounds=iterations, seed=seed)
 
@@ -172,7 +180,7 @@ def calculate(evt):
         pnames = names[np.array(perm)]
         roll = -pnames.tolist().index(names[0])
         pnames = np.roll(pnames, roll).tolist()
-        assignments = np.roll(assignments, roll)
+        assignments = np.roll(assignments, roll, axis=0)
         pnames = tuple(pnames)
         pnames = tuple(name.title() for name in pnames)
         if pnames not in handled:

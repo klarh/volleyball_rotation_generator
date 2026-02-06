@@ -50,7 +50,14 @@ def share_url():
 def share_url_():
     query = {}
 
-    for name in ('population', 'iterations', 'rows', 'swap_cost', 'flex_power'):
+    for name in (
+        'population',
+        'iterations',
+        'rows',
+        'swap_cost',
+        'flex_power',
+        'off_right',
+    ):
         query[name] = web.page['#settings_{}'.format(name)][0].value
 
     table = ui.PlayerTable()
