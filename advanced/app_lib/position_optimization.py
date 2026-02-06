@@ -4,10 +4,10 @@ import itertools
 import collections
 
 base_systems = [
-    'smooms',  # 4-2 basic
-    'SmoomS',  # 6-2 (setter hitting when in front row)
-    'pmooms',  # 5-1 setter back row
-    'smoomp',  # 5-1 setter front row
+    'smoldr',  # 4-2 basic
+    'SmoldS',  # 6-2 (setter hitting when in front row)
+    'pmolds',  # 5-1 setter back row
+    'smoldp',  # 5-1 setter front row
 ]
 
 position_names = list(sorted(set(''.join(base_systems))))
@@ -83,6 +83,9 @@ def get_scores(prefs, flex_power=0.5, swap_cost=0.1):
         # setter (back row)/oppo (front row)
         S=0.5 * (ternary[:, 0] + ternary[:, 2] * prefs['pin_preference']),
     )
+    player_position_scores['l'] = player_position_scores['o']
+    player_position_scores['d'] = player_position_scores['m']
+    player_position_scores['r'] = player_position_scores['s']
 
     player_position_array = np.array(
         [player_position_scores[c] for c in position_names]
@@ -98,7 +101,6 @@ def get_scores(prefs, flex_power=0.5, swap_cost=0.1):
     )
 
     back_set_comfort = prefs['back_row_set'][all_rotations]  # Look up comfort
-    # avg_comfort = np.min(back_set_comfort, axis=-1, keepdims=True)
     avg_comfort = np.exp(
         np.mean(np.log(back_set_comfort + 1e-9), axis=-1, keepdims=True)
     )
@@ -163,6 +165,8 @@ class PermutationFinder:
         for i, (scores, perm, _) in enumerate(pop):
             live_perms[perm].add(i)
 
+        best_score = max(v[0][0] for v in pop)
+        best_scores = [best_score]
         for i, j in rng.choice(population, size=(rounds, 2)):
             if i == j:
                 j = (i + 1) % population
@@ -176,7 +180,11 @@ class PermutationFinder:
                 pop[i] = mix
                 live_perms[mix[1]].add(i)
 
+            best_score = max(best_score, mix[0][0])
+            best_scores.append(best_score)
+
         pop.sort()
+        self.last_scores = best_scores
 
         return pop
 
@@ -187,12 +195,10 @@ class PermutationFinder:
 
         N = scores.shape[0]
         position_counts = [collections.Counter() for _ in range(N)]
-        print('chosen', chosen_systems)
         for offset, system_name in enumerate(chosen_systems):
             for i, c in enumerate(system_name):
                 i = (i + offset) % N
                 position_counts[i][c] += 1
-        print(position_counts)
         return position_counts
 
 

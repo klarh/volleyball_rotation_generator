@@ -8,6 +8,34 @@ from .position_optimization import PermutationFinder
 from .state import share_url
 
 
+class ScorePlotter:
+    def __init__(self, element_id):
+        self.svg = page.find(element_id)[0]
+        self.polyline = self.svg.find('polyline')[0]
+        self.width = 1000
+        self.height = 100
+
+        # Reset display and clear points
+        self.svg.style['display'] = 'block'
+        self.polyline.setAttribute('points', '')
+
+    def update(self, vals):
+        vals = -np.array(vals)
+        vals -= np.min(vals)
+        vals /= max(1e-9, np.max(np.abs(vals)))
+
+        points = []
+        xs = np.exp(np.log1p(np.linspace(0, self.width, len(vals))))
+        xs = np.log1p(np.linspace(0, self.width, len(vals)))
+        xs *= self.width / xs.max()
+        vals = (self.height - 5) * vals + 5 * (1 - vals)
+
+        for x, y in zip(xs, vals):
+            points.append(f'{x:.1f},{y:.1f}')
+
+        self.polyline.setAttribute('points', ' '.join(points))
+
+
 class PlayerTable:
     def __init__(self):
         self.table = self.find_table()
@@ -133,6 +161,9 @@ def calculate(evt):
     seed = int(pytime.time() * 100) % 2**32
     pop = p.optimize(population=population, rounds=iterations, seed=seed)
 
+    plot = ScorePlotter('#score_plot')
+    plot.update(p.last_scores)
+
     to = OutputTable()
     to.clear()
     handled = set()
@@ -150,7 +181,7 @@ def calculate(evt):
             for name in pnames:
                 player_stats = stats[name]
                 details = []
-                for pos in 'smopS':
+                for pos in 'smopSldr':
                     pos_name = position_remap.get(pos, pos).upper()
                     if not player_stats[pos]:
                         continue
