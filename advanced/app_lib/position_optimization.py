@@ -6,8 +6,7 @@ import collections
 base_systems = [
     'smoldr',  # 4-2 basic
     'pmoldS',  # 6-2 (setter hitting when in front row)
-    'pmolds',  # 5-1 setter back row
-    'smoldr',  # 5-1 setter front row
+    'smoldr',  # 5-1/6-2 setter front row
 ]
 
 position_names = list(sorted(set(''.join(base_systems))))
