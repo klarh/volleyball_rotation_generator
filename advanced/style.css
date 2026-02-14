@@ -93,7 +93,7 @@ span.slide_label_left {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 0.5em;
+  gap: 1em;
   min-width: 8em;
   padding: 0.25em 0;
 }
