@@ -50,8 +50,7 @@ class PlayerTable:
                 th('Setting'),
                 th('Blocking'),
                 th('Hitting'),
-                th('Hit L/R'),
-                th('Set from back'),
+                th('Hit L/R', br(), 'Set from back'),
             )
         )
         return result
@@ -59,7 +58,7 @@ class PlayerTable:
     def add_row(self, name, setter, middle, outside, pin_pref, back_row_set):
         make_check = lambda x, cls: input_(
             type='range',
-            classes=[cls, 'value_slider', 'autosave'],
+            classes=(cls + ['value_slider', 'autosave']),
             min=0,
             max=1,
             step='0.001',
@@ -68,13 +67,18 @@ class PlayerTable:
         name_elt = input_(value=str(name), classes=['player_name', 'autosave'])
         when('input', name_elt, handler=share_url)
 
+        stacked_div = div(
+            make_check(pin_pref, ['player_pin_side', 'force_H']),
+            make_check(back_row_set, ['player_back_row_set', 'force_H']),
+            classes=['stack_container'],
+        )
+
         row = tr(
             td(name_elt),
-            td(make_check(setter, 'player_setter')),
-            td(make_check(middle, 'player_middle')),
-            td(make_check(outside, 'player_outside')),
-            td(make_check(pin_pref, 'player_pin_side')),
-            td(make_check(back_row_set, 'player_back_row_set')),
+            td(make_check(setter, ['player_setter'])),
+            td(make_check(middle, ['player_middle'])),
+            td(make_check(outside, ['player_outside'])),
+            td(stacked_div, classes=['center_V']),
             td(button('\u274c', on_click=self.remove_row_callback)),
             classes=['player_row'],
         )
