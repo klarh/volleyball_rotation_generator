@@ -50,7 +50,13 @@ class PlayerTable:
                 th('Setting'),
                 th('Blocking'),
                 th('Hitting'),
-                th('Hit L/R', br(), 'Set from back'),
+                th(
+                    'Hit L/R',
+                    span('&#9650;', style=dict(color='rgb(180, 128, 0)')),
+                    br(),
+                    'Set from back',
+                    span('&#9660;', style=dict(color='rgb(92, 92, 92)')),
+                ),
             )
         )
         return result
