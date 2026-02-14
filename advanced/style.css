@@ -178,6 +178,7 @@ label.help {
 
 input.help:checked ~ .subhelp {
   display: block;
+  z-index: 2;
 }
 
 .subhelp {
@@ -256,7 +257,7 @@ div.loading_screen {
   border-radius: 6px;
 
   position: absolute;
-  z-index: 1;
+  z-index: 2;
   bottom: 100%;
   left: -140%;
 }
