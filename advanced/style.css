@@ -138,10 +138,12 @@ label.menu {
   top: 0.5em;
   cursor: pointer;
   font-size: 200%;
+  z-index: 4;
 }
 
 input.menu:checked ~ .submenu {
   display: block;
+  z-index: 2;
 }
 
 .submenu {
@@ -174,11 +176,12 @@ label.help {
   top: 1.5em;
   cursor: pointer;
   font-size: 200%;
+  z-index: 4;
 }
 
 input.help:checked ~ .subhelp {
   display: block;
-  z-index: 2;
+  z-index: 3;
 }
 
 .subhelp {
