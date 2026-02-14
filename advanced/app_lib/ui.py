@@ -67,8 +67,15 @@ class PlayerTable:
         name_elt = input_(value=str(name), classes=['player_name', 'autosave'])
         when('input', name_elt, handler=share_url)
 
-        stacked_div = div(
+        labeled_div = div(
             make_check(pin_pref, ['player_pin_side', 'force_H']),
+            span('O', classes=['slide_label_left']),
+            span('P', classes=['slide_label_right']),
+            classes=['labeled_wrapper'],
+        )
+
+        stacked_div = div(
+            labeled_div,
             make_check(back_row_set, ['player_back_row_set', 'force_H']),
             classes=['stack_container'],
         )

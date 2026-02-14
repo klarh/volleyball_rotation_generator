@@ -62,12 +62,30 @@ input[type='range'].player_middle {
 input[type='range'].player_outside {
   accent-color: rgb(22, 109, 42);
 }
+input[type='range'].player_pin_side {
+  accent-color: rgb(180, 128, 0);
+}
+input[type='range'].player_back_row_set {
+  accent-color: rgb(92, 92, 92);
+}
 input[type='range'].force_H {
   writing-mode: horizontal-tb !important;
   direction: ltr !important;
   width: 100%;
   height: 1.5em;
   margin: 0;
+}
+span.slide_label_right {
+  position: absolute;
+  left: 100%;
+  transform: translateX(-100%) translateY(-100%);
+  pointer-events: none;
+}
+span.slide_label_left {
+  position: absolute;
+  right: 100%;
+  transform: translateX(100%) translateY(-100%);
+  pointer-events: none;
 }
 
 .stack_container {
@@ -78,6 +96,21 @@ input[type='range'].force_H {
   gap: 0.5em;
   min-width: 8em;
   padding: 0.25em 0;
+}
+
+.labeled_wrapper {
+  position: relative;
+  width: 100%;
+  height: 1.5em; /* Match the slider height */
+  display: flex;
+  align-items: center;
+}
+
+/* Make the slider fill the wrapper */
+.labeled_wrapper input[type='range'] {
+  width: 100%;
+  margin: 0;
+  display: block;
 }
 
 td.center_V {
